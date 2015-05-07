@@ -1,0 +1,22 @@
+{
+"models": [
+	{
+        "name": "UserMysql",
+        "class": "apps.models.user.User",
+        "is_multi": "False",
+        "engines": "user_mysql",
+        "table": "user",
+        "pkey_field": "uid",
+        "def_attrs": {
+            "uid":"simple",
+            "age":"simple",
+            "name":"simple",
+            "phone":"simple",
+            "email":"simple",
+            "create_time":"simple"
+        },
+        "top_cache"     : "True",
+        "bottom_async"  : "False"
+	}
+]
+} 

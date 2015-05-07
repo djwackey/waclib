@@ -1,0 +1,44 @@
+{
+"enable_storage_context": "True",
+"storage_engines":[
+    {
+        "sname": "memcache",
+        "class": "waclib.models.memcache.MemcacheEngine",
+        "config" : {
+            "servers" : "127.0.0.1:11211",
+            "default_timeout" : 0
+        }
+    },
+    {
+        "sname": "mysql",
+        "class" : "waclib.models.mysql.MysqlEngine",
+        "config" : {
+            "servers" : {
+                "master" : "('127.0.0.1', '3306', 'root', '', 'test')"
+            },
+            "sharding" : {
+            },
+            "debug" : "False"
+        }
+    },
+    {
+        "sname": "mysql_sharding",
+        "class": "waclib.models.mysql.MysqlEngine",
+        "config" : {
+            "servers" : {
+                "sharding_1" : "('127.0.0.1:3306', 'root', '', 'test')",
+                "sharding_2" : "('127.0.0.1:3306', 'root', '', 'test')",
+                "sharding_3" : "('127.0.0.1:3306', 'root', '', 'test')",
+                "sharding_4" : "('127.0.0.1:3306', 'root', '', 'test')"
+            },
+            "sharding" : {
+                "(0x00,0x0f)" : "sharding_1",
+                "(0x10,0x1f)" : "sharding_2",
+                "(0x20,0x2f)" : "sharding_3",
+                "(0x30,0x3f)" : "sharding_4"
+            },
+            "debug" : "False"
+    	}
+    }
+    ]
+}
