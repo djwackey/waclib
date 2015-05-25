@@ -21,7 +21,7 @@ sql = "select * from user"
 try:
     rows = engine.master_query(sql)
     for row in rows:
-	print row
+        print row
 except Exception, e
     print e
 </pre>

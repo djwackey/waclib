@@ -2,7 +2,7 @@
 
 import sys
 import json
-#from waclib.utils.importlib import import_by_name
+from waclib.utils.importlib import import_by_name
 
 class Application(object):
     def __init__(self):
@@ -42,9 +42,9 @@ class Application(object):
 	
 	self.storage_engines = {}
         for se in cfg_engine_obj.storage_engines:
-	    #cls = import_by_name(se.get("class"))
-	    engine_obj = None#cls()
-            #engine_obj.configure(se.get("config"))
+	    cls = import_by_name(se.get("class"))
+	    engine_obj = cls()
+            engine_obj.configure(se.get("config"))
             self.storage_engines[se.get("sname")] = engine_obj
 	
     def _init_model_engine(self, cfg_engine_obj):
@@ -78,7 +78,3 @@ class Config(object):
             cf.close()
 
 app = Application()
-
-app.init(storage_cfg_file="storage.json")
-
-memcache = app.get_engine("memcache")

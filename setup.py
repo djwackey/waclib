@@ -8,7 +8,7 @@ lib_name = "waclib"
 cur_dir = os.getcwd()
 dirs = utils.list_dirs(cur_dir +"/"+ lib_name)
 
-def _get_packages(lib_name, dirs):
+def get_packages(lib_name, dirs):
     packages = []
     for dir in dirs:
         packages.append(lib_name +"."+ dir)
@@ -17,14 +17,18 @@ def _get_packages(lib_name, dirs):
     packages.append(lib_name)
     return packages
 
-packages = _get_packages(lib_name, dirs)
+packages = get_packages(lib_name, dirs)
+author = "wackey"
+email = "worcy_kiddy@126.com"
+url = "blog.csdn.net/worcy_kiddy"
 version = "1.0.0"
+description = "wackey's lib"
 
 setup(name=lib_name,
       version=version,
-      description="wackey's lib",
-      author='wackey',
-      author_email='worcy_kiddy@126.com',
-      url='blog.csdn.net/worcy_kiddy',
+      description=description,
+      author=author,
+      author_email=email,
+      url=url,
       packages=packages,
      )
