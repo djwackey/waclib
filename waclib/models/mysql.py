@@ -21,16 +21,17 @@ def _smart(v):
     elif t == datetime.datetime:
         return v.strftime("%Y-%m-%d %H:%M:%S")
     return str(v)
-    
+
 def _pairtext(k, v):
     if v is None:
         return "%s=null" % k
     return "%s='%s'" % (k, escape_string(_smart(v)))
-    
+
 def _sqltext(data, delimiter=","):
     return delimiter.join([_pairtext(k[0], k[1]) for k in data.items()])
-    
-class MysqlEngine(StorageEngine):    
+
+class MysqlEngine(StorageEngine):
+
     def configure(self, cfg_value):
         StorageEngine.configure(self, cfg_value)
         self.servers = cfg_value["servers"]
@@ -40,8 +41,8 @@ class MysqlEngine(StorageEngine):
             for i in range(i_range[0], i_range[1]+1):
                 self.sharding[hex(i)[2:].zfill(2)] = server_index
         self.debug = cfg_value.get("debug", False)
-    
-    def get_data(self, model_cls, pkey):     
+
+    def get_data(self, model_cls, pkey):
         return self._select(model_cls, pkey)
 
     def put_data(self, model_cls, pkey, data, create_new):
@@ -52,7 +53,7 @@ class MysqlEngine(StorageEngine):
 
     def delete_data(self, model_cls, pkey):
         self._delete(model_cls, pkey)
-        
+
     def _insert(self, model_cls, pkey, data):
         conn, table = self._get_connection_info(model_cls, pkey)
         try:
@@ -62,11 +63,11 @@ class MysqlEngine(StorageEngine):
                     "port:", conn._db_args["port"], "db:", conn._db_args["db"]
                 print >> sys.stderr, "[DEBUG]", sql
 
-	    # return last_id
+            # return last_id
             return conn.execute(sql)
         finally:
             conn.close()
-        
+
     def _update(self, model_cls, pkey, data):
         conn, table = self._get_connection_info(model_cls, pkey)
         try:
@@ -74,11 +75,11 @@ class MysqlEngine(StorageEngine):
             if self.debug:
                 print >> sys.stderr, "[DEBUG]", "host:", conn._db_args["host"], \
                     "port:", conn._db_args["port"], "db:", conn._db_args["db"]
-                print >> sys.stderr, "[DEBUG]", sql            
+                print >> sys.stderr, "[DEBUG]", sql
             conn.execute(sql)
         finally:
             conn.close()
-        
+
     def _select(self, model_cls, pkey):
         conn, table = self._get_connection_info(model_cls, pkey)
         try:
@@ -86,11 +87,11 @@ class MysqlEngine(StorageEngine):
             if self.debug:
                 print >> sys.stderr, "[DEBUG]", "host:", conn._db_args["host"], \
                     "port:", conn._db_args["port"], "db:", conn._db_args["db"]
-                print >> sys.stderr, "[DEBUG]", sql          
+                print >> sys.stderr, "[DEBUG]", sql
             return conn.get(sql)
         finally:
             conn.close()
-        
+
     def _delete(self, model_cls, pkey):
         conn, table = self._get_connection_info(model_cls, pkey)
         try:
@@ -98,11 +99,11 @@ class MysqlEngine(StorageEngine):
             if self.debug:
                 print >> sys.stderr, "[DEBUG]", "host:", conn._db_args["host"], \
                     "port:", conn._db_args["port"], "db:", conn._db_args["db"]
-                print >> sys.stderr, "[DEBUG]", sql          
+                print >> sys.stderr, "[DEBUG]", sql
             conn.execute(sql)
         finally:
             conn.close()
-                        
+
     def _get_connection_info(self, model_cls, pkey):
         if not model_cls.is_multi:	# 单表
             host, user, passwd, database = self.servers.get("master")
@@ -112,54 +113,53 @@ class MysqlEngine(StorageEngine):
             host, user, passwd, database = self.servers.get(self.sharding[shard_index])
             table = "%s_%s" % (model_cls.table, table_index)
         return Connection(host, database, user, passwd), table
-                        
+
     def _get_shard_info(self, shard_key):
-        m = hashlib.md5()
-        m.update(force_str(shard_key))
-        digest = m.hexdigest()
+        digest = hashlib.md5().update(force_str(shard_key)).hexdigest()
         return digest[:2], digest[-1]
-    
+
     def _get_master_connection(self):
         """获得主库的Connection实例"""
-        host, user, passwd, database = self.servers.get("master")
-        
+        host, user, passwd, database = eval(self.servers.get("master"))
+
         return Connection(host, database, user, passwd)
-    
+
     def master_query(self, query, *parameters):
         """主库query"""
         conn = self._get_master_connection()
-        
+
         try:
             return conn.query(query, *parameters)
         finally:
             conn.close()
-    
+
     def master_get(self, query, *parameters):
         """主库get"""
         conn = self._get_master_connection()
-        
+
         try:
             return conn.get(query, *parameters)
         finally:
             conn.close()
-    
+
     def master_execute(self, query, *parameters):
         """主库execute"""
         conn = self._get_master_connection()
-        
+
         try:
             return conn.execute(query, *parameters)
         finally:
             conn.close()
-            
+
 
 class MysqlEngineExt(MysqlEngine):
-    def configure(self,cfg_value):
+
+    def configure(self, cfg_value):
         StorageEngine.configure(self, cfg_value)
         self.servers = cfg_value["servers"]
         self.debug = cfg_value.get("debug", False)
 
-    def _get_connection_info(self, model_cls,pkey):
+    def _get_connection_info(self, model_cls, pkey):
         if not model_cls.is_multi:   # 单表
             host, user, passwd, database = self.servers.get("master")
             table = model_cls.table
@@ -169,5 +169,5 @@ class MysqlEngineExt(MysqlEngine):
             table = "%s_%s" % (model_cls.table, table_index)
         return Connection(host, database, user, passwd), table
 
-    def _get_shard_info(self,pkey):
+    def _get_shard_info(self, pkey):
         return "%s_%s"%(pkey[-6:-2], pkey[-2:])

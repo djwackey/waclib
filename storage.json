@@ -14,7 +14,7 @@
         "class" : "waclib.models.mysql.MysqlEngine",
         "config" : {
             "servers" : {
-                "master" : "('127.0.0.1', '3306', 'root', '', 'test')"
+                "master" : "('127.0.0.1:3306', 'root', '', 'test')"
             },
             "sharding" : {
             },

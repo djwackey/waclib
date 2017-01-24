@@ -1,25 +1,26 @@
 #-*- coding: utf-8 -*-
 
 import os
-import utils	# from waclib #
 import compileall
+
+from waclib import utils
 
 """
 * py_compile *
-This module allows you to explicitly compile Python modules 
-to bytecode. It behaves like Python’s import statement, 
+This module allows you to explicitly compile Python modules
+to bytecode. It behaves like Python’s import statement,
 but takes a file name, not a module name.
 """
 """
 * compileall *
-This module contains functions to compile all Python scripts 
-in a given directory (or along the Python path) to bytecode. 
-It can also be used as a script (on Unix platforms, it’s 
+This module contains functions to compile all Python scripts
+in a given directory (or along the Python path) to bytecode.
+It can also be used as a script (on Unix platforms, it’s
 automatically run when Python is installed).
 """
 
-def exec_compile(package_list):
-    for package in package_list:
+def exec_compile(packages):
+    for package in packages:
         compileall.compile_dir(package, force=1)
 
 # list all packages
