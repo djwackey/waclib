@@ -1,34 +1,33 @@
 #-*- coding: utf-8 -*-
 
 import os
-from waclib import utils
 from distutils.core import setup
 
-lib_name = "waclib"
-cur_dir = os.getcwd()
-dirs = utils.list_dirs(cur_dir +"/"+ lib_name)
+from waclib import utils
 
-def get_packages(lib_name, dirs):
-    packages = []
-    for dir in dirs:
-        packages.append(lib_name +"."+ dir)
+LIB_NAME = "waclib"
+CUR_DIR = os.getcwd()
+DIRS = utils.list_dirs(CUR_DIR +"/"+ LIB_NAME)
 
-    # add myself.
-    packages.append(lib_name)
+def get_packages(lib_name, main_dirs):
+    packages = [lib_name]
+    for child_dir in main_dirs:
+        packages.append(lib_name +"."+ child_dir)
+
     return packages
 
-packages = get_packages(lib_name, dirs)
-author = "wackey"
-email = "worcy_kiddy@126.com"
-url = "blog.csdn.net/worcy_kiddy"
-version = "1.0.0"
-description = "wackey's lib"
+PACKAGES = get_packages(LIB_NAME, DIRS)
+AUTHOR = "wackey"
+EMAIL = "worcy_kiddy@126.com"
+URL = "blog.csdn.net/worcy_kiddy"
+VERSION = "1.0.0"
+DESCRIPTION = "wackey's lib"
 
-setup(name=lib_name,
-      version=version,
-      description=description,
-      author=author,
-      author_email=email,
-      url=url,
-      packages=packages,
+setup(name=LIB_NAME,
+      version=VERSION,
+      description=DESCRIPTION,
+      author=AUTHOR,
+      author_email=EMAIL,
+      url=URL,
+      packages=PACKAGES,
      )
